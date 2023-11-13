@@ -5,6 +5,15 @@ from sklearn.decomposition import PCA
 TOTAL_NEIGHBORS = 10
 PCA_DIMENSION = 15
 
+def generate_vector(word):
+    arr = [0] * 26
+    for letter in word:
+        if letter not in "qazxswedcvfrtgbnhyujmikolp":
+            continue
+        indx = ord(letter)-ord('a')
+        arr[indx] += 1
+    return arr
+    
 with open("allwords_dataset.csv", 'r') as file:
     # Create an empty list to store the lines
     lines = []
@@ -21,26 +30,15 @@ with open("allwords_dataset.csv", 'r') as file:
 words = []
 vectors = []
 for word in lines:
-    arr = [0] * 26
-    for letter in word:
-        if letter not in "qazxswedcvfrtgbnhyujmikolp":
-            continue
-        indx = ord(letter)-ord('a')
-        arr[indx] += 1
+    vectors.append(generate_vector(word))
     words.append(word)
-    vectors.append(arr)
 
 ktree = WordSearchKDTree(words, vectors)
 rtree = WordSearchRTree(words, vectors)
 
 print("Enter query word:")
 queryWord = input()
-wordArray = [0] * 26
-for letter in queryWord:
-    if letter not in "qazxswedcvfrtgbnhyujmikolp":
-        continue
-    indx = ord(letter)-ord('a')
-    wordArray[indx] += 1
+wordArray = generate_vector(queryWord)
 
 ktree.query(wordArray, TOTAL_NEIGHBORS)
 
