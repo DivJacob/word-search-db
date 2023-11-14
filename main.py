@@ -1,6 +1,7 @@
 from WordSearchKDTree import WordSearchKDTree
 from WordSearchRTree import WordSearchRTree
 from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.decomposition import TruncatedSVD
 from sklearn.decomposition import PCA
 import numpy as np
@@ -51,7 +52,8 @@ rtree.query(wordArray, TOTAL_NEIGHBORS)
 
 
 pca = PCA(n_components=PCA_DIMENSION) 
-CV = CountVectorizer(max_features=26)
+CV = CountVectorizer(max_features=15)
+tfidf = TfidfVectorizer(max_features=15)
 
 reduced_vectors = pca.fit_transform(vectors)
 reducedktree = WordSearchKDTree(words, reduced_vectors)
@@ -63,11 +65,18 @@ reducedktree.query(reducedWordArray, TOTAL_NEIGHBORS)
 reducedrtree.query(reducedWordArray, TOTAL_NEIGHBORS)
 
 print("Count Vectorizer Reduction :")
-tsvd = TruncatedSVD(n_components=26)
 reduced_vectors = CV.fit_transform(words).toarray()
 reducedktree = WordSearchKDTree(words, reduced_vectors)
 reducedrtree = WordSearchRTree(words, reduced_vectors)
 reducedWordArray = CV.transform(list(queryWord)).toarray()[0]
 
+reducedktree.query(reducedWordArray, TOTAL_NEIGHBORS)
+reducedrtree.query(reducedWordArray, TOTAL_NEIGHBORS)
+
+print("Tfidf Vectorizer Reduction :")
+reduced_vectors = tfidf.fit_transform(words).toarray()
+reducedktree = WordSearchKDTree(words, reduced_vectors)
+reducedrtree = WordSearchRTree(words, reduced_vectors)
+reducedWordArray = tfidf.transform(list(queryWord)).toarray()[0]
 reducedktree.query(reducedWordArray, TOTAL_NEIGHBORS)
 reducedrtree.query(reducedWordArray, TOTAL_NEIGHBORS)
